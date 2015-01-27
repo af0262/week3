@@ -1,120 +1,83 @@
-# Game of Blackjack
-
-# Simplified Rules (10 pts possible):
-# - Human player gets the first two cards
-# - Human player plays the rest of their hand
-# - Then computer gets next two cards
-# - Computer must take cards score  >= 17
-# - Computer must stand when score >= 17
-# - Aces always count as 11
-# - Human player loses if their score is > 21
-# - Computer loses if computer score is > 21
-# - Human player wins immediately if their score is exactly 21
-# - Computer wins immediately if their score is exactly 21
-# - If computer score is betwen 17 and 20, winner is determined by score
-# - If it's a tie, nobody wins.
-
-# Grading:
-# - 5 points for allowing a human user to play their complete hand
-# - 5 points for allowing the computer to play its hand
-
-# (Optional) Extras
-# [You don't get extra credit for these, but they're fun.]
-# - 1. Aces should count as 1 if counting as 11 would have made the score > 21
-# - 2. Initally, human and dealer both get two cards; one dealer card is face up
-# - 3. Allow the user to play as many games as they want
-# - 4. Dealing cards to the cmputer should have a dramatic, 4-second delay
-
-# Here's the psuedocode we wrote on the board in class:
-
-## Get a deck of cards
-
-## Shuffle the deck
-
-## Deal the first two cards to user
-
-## User can choose to take cards as long as score < 21
-
-## If user goes over 21, game is over.
-
-## If user reaches 21, game is over.
-
-## If user stands with less than 21, then it's the dealer's turn:
-
-##    Computer takes two cards
-##    Computer must take more cards while computer score < 17
-##    If computer score reached 21, computer wins.
-##    If computer score goes over 21, computer loses.
-##    If computer score is 17 to 20, winner is determined by higher score.
-
-
-
-
+# This program plays a blackjack
+# step 1
+    # Shuflle the Deck
+    # Deal two cards to the player
+    # ask the player if they want more cards
+    # provide the player cards until they say no or untill they they go over 21
+    # When player says no, the dealer is given two cards
+    # provide dealer cards untill the reach 17
 
 import random
 import time
 
-SUITS = "\u2663 \u2665 \u2666 \u2660".split()
-FACES = "A 2 3 4 5 6 7 8 9 10 J Q K".split()
+suits = 'S H C D'
+cards = "A 2 3 4 5 6 7 8 9 10 J Q K"
+#card_value = {'A':11, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, 'T':10, 'J':10, 'Q':10, 'K':10}
+#deck=list(card_value.items())
+
+card=(cards.split())
+suit=(suits.split())
 
 deck = []
-for suit in SUITS:
-  for face in FACES:
-    deck.append(face+suit)
+for s in suit:
+    for c in card:
+        deck.append(c + ' ' + 'of' + ' ' + s)
 
-random.shuffle(deck)
+    random.shuffle(deck) 
 
-def calculate_score(cards):
-  value = 0
-  for card in cards:
-    face = card[:-1]
-    if face in ['J', 'Q', 'K']:
-      points = 10
-    elif face == 'A':
-      points = 11
+##print(deck)
+
+def score(hands):
+  total = 0
+  for hand in hands:
+    c = hand[:-5]
+    if c in ['J', 'Q', 'K']:
+       point=10
+    elif c == 'A':
+      point = 11
     else:
-      points = int(face)
-    value += points
-  return value
+      point = int(c)
+    total = total+point
+  return total
 
-# Deal two cards
-hand = [deck.pop(0), deck.pop(0)]
-score = calculate_score(hand)
+play = [deck.pop(0),deck.pop(0)]
+total_score = score(play)
 
-print("Your hand:", " ".join(hand))
+print ("Your Cards are:",(play))
+print ("Your Cards are:",total_score)
 
-while score < 21 and input("Do you want another card? (y/n) ") == 'y':
-  hand.append(deck.pop(0))
-  score = calculate_score(hand)
-  print("Your hand:", ", ".join(hand))
+while total_score < 21 and input("Do you want another card? (y/n) ") == 'y':
+  play.append(deck.pop(0))
+  total_score = score(play)
+  print("Your hand:", ", ",(play))
 
-if score > 21:
-  print("You're busted!")
-elif score == 21:
+if total_score > 21:
+  print("You're Done!")
+elif total_score == 21:
   print("You win!")
 else:
-  print("You have %s points." % score)
+  print("Your score is:",total_score)
   print()
   dealer_hand = [deck.pop(0), deck.pop(0)]
-  dealer_score = calculate_score(dealer_hand)
-  print("Dealer has", " ".join(dealer_hand))
-  while dealer_score < 17:
+  dealer_score = score(dealer_hand)
+  print("Dealer has", " ",(dealer_hand))
+
+while dealer_score < 17:
     print("The dealer will take another card...")
-    time.sleep(5)
+    #time.sleep(5)
     dealer_hand.append(deck.pop(0))
-    dealer_score = calculate_score(dealer_hand)
-    print("Dealer now has", " ".join(dealer_hand))
-    time.sleep(3)
+    dealer_score = score(dealer_hand)
+    print("Dealer now has", " ",(dealer_hand))
+    #time.sleep(3)
 
-  if dealer_score > 21:
+if dealer_score > 21:
     print("The dealer busted! You win!")
-  elif dealer_score == 21:
+elif dealer_score == 21:
     print("The dealer got 21! You lose.")
-  elif dealer_score > score:
+elif dealer_score > total_score:
     print("You lost.")
-  elif dealer_score == score:
+elif dealer_score == total_score:
     print("It's a tie.... nobody wins this time.")
-  else:
+else:
     print("You win!")
-
 
